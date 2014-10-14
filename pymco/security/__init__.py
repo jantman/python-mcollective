@@ -7,7 +7,6 @@ import abc
 import base64
 
 import logging
-logger = logging.getLogger(__name__)
 
 
 class SecurityProviderBase(object):
@@ -22,6 +21,7 @@ class SecurityProviderBase(object):
 
     def __init__(self, config):
         self.config = config
+        self.logger = logging.getLogger(__name__)
 
     def serialize(self, msg):
         """Serialize message using provided serialization.
@@ -50,6 +50,7 @@ class SecurityProviderBase(object):
         """
         signed_msg = self.serialize(self.sign(msg))
         if b64:
+            self.logger.debug("base64 encoding signed message")
             signed_msg = base64.b64encode(signed_msg)
         return signed_msg
 
@@ -63,8 +64,13 @@ class SecurityProviderBase(object):
         :return: Decoded message, a :py:class:`dict` like object.
         """
         if b64:
+            self.logger.debug("base64 decoding message")
             msg = base64.b64decode(msg)
-        return self.verify(self.deserialize(msg))
+        else:
+            self.logger.debug("NOT base64 decoding message")
+        deserialized = self.deserialize(msg)
+        self.logger.debug("deserialized message: {d}".format(d=deserialized))
+        return self.verify(deserialized)
 
 
 def sign(self, msg):
