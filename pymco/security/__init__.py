@@ -7,7 +7,6 @@ import abc
 import base64
 
 import logging
-logger = logging.getLogger(__name__)
 
 
 class SecurityProviderBase(object):
@@ -22,6 +21,7 @@ class SecurityProviderBase(object):
 
     def __init__(self, config):
         self.config = config
+        self.logger = logging.getLogger(__name__)
 
     def serialize(self, msg):
         """Serialize message using provided serialization.

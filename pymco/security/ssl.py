@@ -19,7 +19,6 @@ from . import SecurityProvider
 from .. import utils
 
 import logging
-logger = logging.getLogger(__name__)
 
 
 class SSLProvider(SecurityProvider):
@@ -31,6 +30,7 @@ class SSLProvider(SecurityProvider):
     """
     def __init__(self, config):
         super(SSLProvider, self).__init__(config=config)
+        self.logger = logging.getLogger(__name__)
         self._private_key = None
         self._server_public_key = None
         self._caller_id = None

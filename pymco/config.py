@@ -19,7 +19,6 @@ from .serializers import SerializerBase
 from . import utils
 
 import logging
-logger = logging.getLogger(__name__)
 
 INFINITE = 9999999999999999999
 
@@ -53,7 +52,8 @@ class Config(collections.Mapping):
         # when not explicitly set
         if not self.config.get('identity'):
             self.config['identity'] = socket.gethostname()
-        logger.debug("initialized Config")
+        self.logger = logging.getLogger(__name__)
+        self.logger.debug("initialized Config")
 
     def __len__(self):
         return len(self.config)
@@ -105,19 +105,19 @@ class Config(collections.Mapping):
     def get_connector(self):
         """Get connector based on MCollective settings."""
         import_path = Connector.plugins[self.config['connector']]
-        logger.debug("connector import path: {i}".format(i=import_path))
+        self.logger.debug("connector import path: {i}".format(i=import_path))
         return utils.import_object(import_path, config=self)
 
     def get_security(self):
         """Get security plugin based on MCollective settings."""
         import_path = SecurityProvider.plugins[self.config['securityprovider']]
-        logger.debug("securityprovider import path: {i}".format(i=import_path))
+        self.logger.debug("securityprovider import path: {i}".format(i=import_path))
         return utils.import_object(import_path, config=self)
 
     def get_serializer(self, key):
         """Get serializer based on MCollective settings."""
         import_path = SerializerBase.plugins[self.config[key]]
-        logger.debug("serializer import path: {i}".format(i=import_path))
+        self.logger.debug("serializer import path: {i}".format(i=import_path))
         return utils.import_object(import_path)
 
     def get_host_and_ports(self):
@@ -241,7 +241,6 @@ class Config(collections.Mapping):
         :return: :py:class:`Config` instance.
         """
         configstr = open(configfile, 'rt').read()
-        logger.debug("read configuration from file {f}".format(f=configfile))
         return Config.from_configstr(configstr)
 
     @staticmethod
